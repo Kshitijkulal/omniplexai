@@ -1,185 +1,125 @@
-![hero](Github.png)
 
-<p align="center">
-	<h1 align="center"><b>Omniplex</b></h1>
-<p align="center">
-    Open-Source Perplexity
-    <br />
-    <br />
-    <a href="https://omniplex.ai">Website</a>
-    ·
-    <a href="https://discord.gg/87Mh7q5ZSd">Discord</a>
-    ·
-    <a href="https://www.reddit.com/r/omniplex_ai">Reddit</a>
-  </p>
-</p>
+# OmniplexAI
 
-# :construction: Under Active Development
+OmniplexAI is a feature-rich application that leverages AI to provide seamless interactions for users, such as stock data retrieval and AI-powered web search. This project was enhanced to include improved login functionality and a fully operational stocks feature.
 
-> Our focus is on establishing core functionality and essential features. As we continue to develop Omniplex, we are committed to implementing best practices, refining the codebase, and introducing new features to enhance the user experience.
+## Getting Started
 
-## Get started
-
-To run the project, modify the code in the Chat component to use the `// Development Code`.
-
-1. Fork & Clone the repository
+### 1. Clone the Repository
+Clone the project repository using the following command:
 
 ```bash
-git clone git@github.com:[YOUR_GITHUB_ACCOUNT]/omniplex.git
+git clone https://github.com/Kshitijkulal/omniplexai
+cd omniplexai
 ```
 
-2. Install the dependencies
+### 2. Add API Keys
+Create a `.env.local` file in the root of your project and fill in the required API keys. These include:
+
+- OpenAI API Key
+- Alpha Vantage API Key
+- Bing API Key
+
+Example `.env.local`:
+
+```plaintext
+NEXT_PUBLIC_OPENAI_API_KEY=your-openai-api-key
+NEXT_PUBLIC_ALPHA_VANTAGE_API_KEY=your-alpha-vantage-api-key
+NEXT_PUBLIC_BING_API_KEY=your-bing-api-key
+```
+
+### 3. Configure Firebase
+Add Firebase configuration for authentication and Firestore by creating a file `firebaseConfig.js` in the root directory:
+
+```javascript
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+
+// Your Firebase configuration
+const firebaseConfig = {
+  apiKey: "your-api-key",
+  authDomain: "your-auth-domain",
+  projectId: "your-project-id",
+  storageBucket: "your-storage-bucket",
+  messagingSenderId: "your-messaging-sender-id",
+  appId: "your-app-id",
+  measurementId: "your-measurement-id",
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+
+export default app;
+```
+
+### 4. Install Dependencies
+Use yarn to install all required dependencies:
 
 ```bash
-yarn
+yarn install
 ```
 
-3. Fill out secrets in `.env.local`
-
-```bash
-BING_API_KEY=
-OPENAI_API_KEY=
-
-OPENWEATHERMAP_API_KEY=
-ALPHA_VANTAGE_API_KEY=
-FINNHUB_API_KEY=
-```
-
-4. Run the development server
+### 5. Run the Project
+Start the development server:
 
 ```bash
 yarn dev
 ```
 
-5. Open [http://localhost:3000](http://localhost:3000) in your browser to see the app.
+Visit the application at [http://localhost:3000](http://localhost:3000).
 
-## Plugins Development
+## Key Features
 
-> This is just a hacky way but very easy to implement. We will be adding a more robust way to add plugins in the future. Feel free to understand from the sample plugin we have added.
+### 1. Improved Login Page
+- Replaced the original popup-based login with a dedicated page at `/auth/login/`.
+- Created a modern UI similar to Claude for a seamless user experience.
+- This page allows users to log in with Firebase authentication.
 
-1. Update the types in `types.ts` to include the new plugin data types.
-2. Update the `tools` api in `api` to include the new plugin function call.
-3. Update the `api.ts` in `utils` file to include the new plugin data.
-4. Update the `chatSlice.ts` in `store` to include the new plugin reducer.
-5. Create a new folder in the `components` directory for the UI of the plugin.
-6. Update the `chat.tsx` to handle the new plugin in `useEffect`.
-7. Call the plugin function and return the data as props to source.
-8. Update the `source.ts` to use the plugin UI.
-9. Lastly Update the `data.ts` in `utils` to show in the plugin tab.
+### 2. Functional Stock Component
+- The previously non-functional stock feature (causing 404 errors) was rebuilt to be fully functional.
+- The new stock feature is located at `/plugins/stocks`.
+- Integrated with the Alpha Vantage API to fetch real-time stock data.
+- Includes a search feature for querying stocks and visualizing their prices with charts.
 
-## Multi-LLM Support: Example
-
-1. Add the new LLM apiKey in env and add the related npm package.
+## Folder Structure
 
 ```bash
-ANTHROPIC_API_KEY=******
+.
+├── src
+│   ├── app
+│   │   ├── auth
+│   │   │   └── login
+│   │   │       └── page.tsx
+│   │   ├── plugins
+│   │   │   └── stocks
+│   │   │       └── page.tsx
+│   ├── components
+│   │   ├── MainPrompt
+│   │   ├── History
+│   │   └── Stocks
+│   ├── utils
+│   │   ├── utils.js
+│   │   └── types.js
+│   └── store
+│       └── authSlice.ts
+├── firebaseConfig.js
+├── .env.local
+├── package.json
+└── README.md
 ```
 
-2. Update the `chat` in `api`
+## Enhancements Summary
 
-```ts
-import Anthropic from "@anthropic-ai/sdk";
-import { OpenAIStream, StreamingTextResponse } from "ai";
+### Login Logic:
+- Original popup-based authentication was replaced with a dedicated login page (`/auth/login`) for better user experience and routing.
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
-
-export const runtime = "edge";
-
-export async function POST(req: Request) {
-  const {
-    messages,
-    model,
-    temperature,
-    max_tokens,
-    top_p,
-    frequency_penalty,
-    presence_penalty,
-  } = await req.json();
-
-  const response = await anthropic.messages.create({
-    stream: true,
-    model: model,
-    temperature: temperature,
-    max_tokens: max_tokens,
-    top_p: top_p,
-    frequency_penalty: frequency_penalty,
-    presence_penalty: presence_penalty,
-    messages: messages,
-  });
-
-  const stream = OpenAIStream(response);
-  return new StreamingTextResponse(stream);
-}
-```
-
-3. Update the `data` in `utils`
-
-```ts
-export const MODELS = [
-  { label: "Claude 3 Haiku", value: "claude-3-haiku-20240307" },
-  { label: "Claude 3 Sonnet", value: "claude-3-sonnet-20240229" },
-  { label: "Claude 3 Opus", value: "claude-3-opus-20240229" },
-];
-```
-
-## Disclaimer
-
-> We recently transitioned from the pages directory to the app directory, which involved significant changes to the project structure and architecture. As a result, you may encounter some inconsistencies or rough edges in the codebase.
-
-### Roadmap
-
-- [x] Images & Videos for Search
-- [x] Upload for Vision Model
-- [x] Chat History for Users
-- [x] Shared Chats & Fork
-- [x] Settings for LLMs
-- [x] Custom OG Metadata
-- [x] Faster API Requests
-- [x] Allow Multiple LLMs
-- [x] Plugin Development
-- [x] Function Calling with Gen UI
-
-### App Architecture
-
-- Language: TypeScript
-- Frontend Framework: React
-- State Management: Redux
-- Web Framework: Next.js
-- Backend and Database: Firebase
-- UI Library: NextUI & Tremor
-- CSS Framework: TailwindCSS
-- AI SDK: Vercel AI SDK
-
-### Services
-
-- LLM: OpenAI
-- Search API: Bing
-- Weather API: OpenWeatherMap
-- Stocks API: Alpha Vantage & Finnhub
-- Dictionary API: WordnikFree Dictionary API
-- Hosting & Analytics: Vercel
-- Authentication, Storage & Database: Firebase
-
-## Contributing
-
-We welcome contributions from the community! If you'd like to contribute to Openpanel, please follow these steps:
-
-1. Fork the repository
-2. Create a new branch for your feature or bug fix
-3. Make your changes and commit them with descriptive messages
-4. Push your changes to your forked repository
-5. Submit a pull request to the main repository
-
-Please ensure that your code follows our coding conventions and passes all tests before submitting a pull request.
-
-## License
-
-This project is licensed under the [AGPL-3.0 license](LICENSE).
+### Stock Feature:
+- Fixed the non-functional stock feature that previously returned a 404 error.
+- Rebuilt as a dynamic component at `/plugins/stocks`.
+- Uses Alpha Vantage API for real-time stock data retrieval.
+- Includes a search feature to query stock prices and display charts.
 
 ## Contact
 
-If you have any questions or suggestions, feel free to reach out to us at [Contact](https://bishalsaha.com/contact).
-
-Happy coding! 🚀
+For questions or suggestions, feel free to reach out to kulalkshitij@gmail.com.
