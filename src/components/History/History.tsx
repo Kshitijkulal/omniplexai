@@ -1,19 +1,14 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation"; // Import usePathname
 import styles from "./History.module.css";
 import Image from "next/image";
 import SpinnerWhite from "../SpinnerWhite/SpinnerWhite";
-import { useRouter } from "next/navigation";
-import { Skeleton } from "@nextui-org/skeleton";
-import { useDisclosure } from "@nextui-org/modal";
-import { ScrollShadow } from "@nextui-org/scroll-shadow";
-import {
-  formatTimestamp,
-  getRelativeDateLabel,
-  cutString,
-} from "@/utils/utils";
-import { ChatThread } from "@/utils/types";
 import { useSelector } from "react-redux";
 import { selectAuthState, selectUserDetailsState } from "../../store/authSlice";
+import { Skeleton } from "@nextui-org/skeleton";
+import { ScrollShadow } from "@nextui-org/scroll-shadow";
 import {
   collection,
   query,
@@ -29,146 +24,124 @@ import Pen from "../../../public/svgs/Pen.svg";
 import Bin from "../../../public/svgs/Bin.svg";
 import ChatInactive from "../../../public/svgs/sidebar/Chat_Inactive.svg";
 
-interface ChatThreadWithTimestamp extends ChatThread {
+interface ChatThread {
+  id: string;
+  chats: { question: string }[];
   createdAt: Timestamp;
 }
 
 const History = () => {
-  const router = useRouter();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const router = useRouter(); // For navigation
+  const pathname = usePathname(); // For determining the current route
   const isAuthenticated = useSelector(selectAuthState);
   const userDetails = useSelector(selectUserDetailsState);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
-  const [chatHistory, setChatHistory] = useState<ChatThreadWithTimestamp[]>([]);
+  const [chatHistory, setChatHistory] = useState<ChatThread[]>([]);
+  const [isLoginRoute, setIsLoginRoute] = useState(false); // State to track if we're on the login route
+
+  // Monitor route changes dynamically
+  useEffect(() => {
+    setIsLoginRoute(pathname === "/auth/login");
+  }, [pathname]);
 
   useEffect(() => {
-    fetchChatHistory();
-  }, [isAuthenticated, userDetails.uid]);
-
-  const fetchChatHistory = async () => {
     if (isAuthenticated && userDetails.uid) {
-      setLoading(true);
-      const historyRef = collection(db, "users", userDetails.uid, "history");
-      const q = query(historyRef, orderBy("createdAt", "desc"));
-      const querySnapshot = await getDocs(q);
-      const history = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as ChatThreadWithTimestamp[];
-      setChatHistory(history);
-      setLoading(false);
+      fetchChatHistory();
     } else {
       setChatHistory([]);
       setLoading(false);
     }
+  }, [isAuthenticated, userDetails.uid]);
+
+  const fetchChatHistory = async () => {
+    setLoading(true);
+    const historyRef = collection(db, "users", userDetails.uid, "history");
+    const q = query(historyRef, orderBy("createdAt", "desc"));
+    const querySnapshot = await getDocs(q);
+    const history = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as ChatThread[];
+    setChatHistory(history);
+    setLoading(false);
   };
 
   const handleDelete = async (threadId: string) => {
-    if (isAuthenticated && userDetails.uid) {
-      setDeleting(true);
-      await deleteDoc(doc(db, "users", userDetails.uid, "history", threadId));
-      fetchChatHistory();
-      setDeleting(false);
-    }
-  };
-
-  // Instead of the modal logic, we'll handle the redirection here
-  const handleAuth = () => {
-    // Redirect to the login page if not authenticated
-    if (!isAuthenticated) {
-      router.push("/auth/login");
-    }
+    setDeleting(true);
+    await deleteDoc(doc(db, "users", userDetails.uid, "history", threadId));
+    fetchChatHistory();
+    setDeleting(false);
   };
 
   return (
     <div className={styles.list}>
       <div className={styles.titleContainer}>
         <div className={styles.title}>Chats</div>
-        <div className={styles.titleButton} onClick={() => router.push("/")}>
-          <Image
-            width={20}
-            height={20}
-            src={Pen}
-            alt={"Pen"}
-            className={styles.titleButtonIcon}
-          />
-          <p className={styles.titleButtonText}>New Chat</p>
-        </div>
+        {/* Conditionally render the New Chat button */}
+        {!isLoginRoute && (
+          <button
+            className={styles.titleButton}
+            onClick={() => router.push("/")}
+          >
+            <Image
+              src={Pen}
+              alt="New Chat"
+              width={20}
+              height={20}
+              className={styles.titleButtonIcon}
+            />
+            <span className={styles.titleButtonText}>New Chat</span>
+          </button>
+        )}
       </div>
       <ScrollShadow hideScrollBar className="h-[calc(100vh_-_50px)] w-full">
         <div className={styles.listContainer}>
           {loading ? (
-            <React.Fragment>
-              <Skeleton className={styles.skeletonListHeader} />
-              <Skeleton className={styles.skeletonListItem} />
-              <Skeleton className={styles.skeletonListItem} />
-              <Skeleton className={styles.skeletonListItem} />
-              <Skeleton className={styles.skeletonListItem} />
-              <Skeleton className={styles.skeletonListItem} />
-              <Skeleton className={styles.skeletonListItem} />
-              <Skeleton className={styles.skeletonListItem} />
-              <Skeleton className={styles.skeletonListItem} />
-              <Skeleton className={styles.skeletonListItem} />
-              <Skeleton className={styles.skeletonListItem} />
-            </React.Fragment>
+            <>
+              {[...Array(8)].map((_, index) => (
+                <Skeleton
+                  key={index}
+                  className={styles.skeletonListItem}
+                />
+              ))}
+            </>
           ) : chatHistory.length === 0 ? (
             <div className={styles.emptyState}>
               <Image
                 src={ChatInactive}
-                alt="Chat Empty"
+                alt="No chats"
                 className={styles.emptyStateIcon}
               />
               <p className={styles.emptyStateText}>No Chat History</p>
             </div>
           ) : (
-            chatHistory.map((item, index, array) => {
-              const formattedDate = formatTimestamp(item.createdAt);
-              const header =
-                index === 0 ||
-                formattedDate !==
-                  formatTimestamp(array[index - 1].createdAt) ? (
-                  <div key={`header-${index}`} className={styles.listHeader}>
-                    {getRelativeDateLabel(formattedDate)}
-                  </div>
-                ) : null;
-              return (
-                <React.Fragment key={item.id}>
-                  {header}
-                  <div
-                    className={styles.listItem}
-                    onClick={() => router.push(`/chat/${item.id}`)}
-                  >
-                    {cutString(item.chats[0].question, 24)}
-                    {deleting ? (
-                      <div className={styles.spinner}>
-                        <SpinnerWhite />
-                      </div>
-                    ) : (
-                      <Image
-                        src={Bin}
-                        alt="Bin"
-                        className={styles.bin}
-                        onClick={(event: React.MouseEvent) => {
-                          event.stopPropagation();
-                          handleDelete(item.id);
-                        }}
-                      />
-                    )}
-                  </div>
-                </React.Fragment>
-              );
-            })
+            chatHistory.map((chat) => (
+              <div
+                key={chat.id}
+                className={styles.listItem}
+                onClick={() => router.push(`/chat/${chat.id}`)}
+              >
+                <span>{chat.chats[0].question}</span>
+                <button
+                  className={styles.deleteButton}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDelete(chat.id);
+                  }}
+                >
+                  <Image
+                    src={Bin}
+                    alt="Delete"
+                    width={16}
+                    height={16}
+                  />
+                </button>
+              </div>
+            ))
           )}
         </div>
       </ScrollShadow>
-      {!isAuthenticated && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.button} onClick={handleAuth}>
-            Sign In
-          </div>
-        </div>
-      )}
     </div>
   );
 };

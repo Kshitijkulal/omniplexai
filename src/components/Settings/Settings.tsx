@@ -116,7 +116,7 @@ const Settings = () => {
   };
 
   const handleSignIn = () => {
-    router.push("/login"); // Redirect to login page
+    router.push("/auth/login"); // Redirect to login page
   };
 
   return (

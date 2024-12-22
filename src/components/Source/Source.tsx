@@ -3,7 +3,7 @@ import Image from "next/image";
 import styles from "./Source.module.css";
 import File from "../File/File";
 import Search from "../Search/Search";
-import Stock from "../Stock/Stock";
+import Stock from "../../app/plugins/stocks/page";
 import Widget from "../Widget/Widget";
 import Weather from "../Weather/Weather";
 import Dictionary from "../Dictionary/Dictionary";

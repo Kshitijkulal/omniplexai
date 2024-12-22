@@ -225,12 +225,12 @@ const MainPrompt = () => {
 
   const handleModal = () => {
     if (authState) {
-      handleFile();
+      handleFile();  // Proceed if authenticated
     } else {
-      setModal("auth");
-      onOpen();
+      router.push("/auth/login");  // Redirect if not authenticated
     }
   };
+  
 
   return (
     <div className={styles.container}>
@@ -408,7 +408,6 @@ const MainPrompt = () => {
           </div>
         </div>
       </div>
-      {modal === "auth" && <Auth isOpen={isOpen} onClose={onClose} />}
     </div>
   );
 };

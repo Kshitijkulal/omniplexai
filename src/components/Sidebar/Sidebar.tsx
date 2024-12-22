@@ -8,11 +8,11 @@ import Library from "../Library/Library";
 import Plugins from "../Plugins/Plugins";
 import Profile from "../Profile/Profile";
 import Settings from "../Settings/Settings";
-import Auth from "../Auth/Auth";
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import { selectAuthState } from "@/store/authSlice";
 import { useDisclosure } from "@nextui-org/modal";
+import { usePathname } from "next/navigation"; // Import usePathname
 
 import Logo from "../../../public/Logo.svg";
 import Menu from "../../../public/svgs/Menu.svg";
@@ -31,13 +31,14 @@ import Collapse from "../../../public/svgs/sidebar/Collapse.svg";
 const Sidebar = () => {
   const router = useRouter();
   const authState = useSelector(selectAuthState);
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const [selected, setSelected] = useState("history");
 
   const [width, setWidth] = useState(0);
   const [isClosing, setIsClosing] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(width >= 512);
   const sidebarRef = useRef<HTMLDivElement>(null);
+
+  const pathname = usePathname(); // Get the current pathname
 
   useEffect(() => {
     const handleResize = () => setWidth(window.innerWidth);
@@ -95,7 +96,7 @@ const Sidebar = () => {
       setSelected("profile");
     } else {
       closeSidebar();
-      onOpen();
+      router.push("/auth/login"); // Redirect to login page
     }
   };
 
@@ -106,24 +107,30 @@ const Sidebar = () => {
   return (
     <>
       <div className={styles.header}>
-        <div onClick={toggleSidebar} className={styles.menu}>
-          <Image priority={true} src={Menu} alt="Menu" width={24} height={24} />
-        </div>
-        <div
-          className={styles.titleButton}
-          style={{ opacity: isSidebarOpen ? 0 : 1 }}
-          onClick={handleNewChat}
-        >
-          <Image
-            priority={true}
-            src={Pen}
-            alt={"Pen"}
-            width={20}
-            height={20}
-            className={styles.titleButtonIcon}
-          />
-          <p className={styles.titleButtonText}>New Chat</p>
-        </div>
+        {/* Only show the menu button if the current path is not '/auth/login' */}
+        {pathname !== "/auth/login" && (
+          <div onClick={toggleSidebar} className={styles.menu}>
+            <Image priority={true} src={Menu} alt="Menu" width={24} height={24} />
+          </div>
+        )}
+        {/* Conditionally render New Chat button */}
+        {pathname !== "/auth/login" && (
+          <div
+            className={styles.titleButton}
+            style={{ opacity: isSidebarOpen ? 0 : 1 }}
+            onClick={handleNewChat}
+          >
+            <Image
+              priority={true}
+              src={Pen}
+              alt={"Pen"}
+              width={20}
+              height={20}
+              className={styles.titleButtonIcon}
+            />
+            <p className={styles.titleButtonText}>New Chat</p>
+          </div>
+        )}
       </div>
       {isSidebarOpen && (
         <>
@@ -237,9 +244,9 @@ const Sidebar = () => {
           )}
         </>
       )}
-      <Auth isOpen={isOpen} onClose={onClose} />
     </>
   );
 };
 
 export default Sidebar;
+
