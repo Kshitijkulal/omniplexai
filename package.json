@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@firebase/app": "0.x",
     "@firebase/firestore": "^4.5.0",
     "@firebase/storage": "^0.12.2",
     "@headlessui/react": "^2.0.3",
@@ -32,10 +33,11 @@
     "axios": "^1.7.9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "csstype": "^3.0.10",
     "dotenv": "^16.4.7",
     "firebase": "^11.1.0",
     "formidable": "^3.5.1",
-    "framer-motion": "^11.0.15",
+    "framer-motion": ">=11.5.6",
     "googleapis": "^134.0.0",
     "katex": "^0.16.10",
     "lucide-react": "^0.468.0",
@@ -51,12 +53,14 @@
     "react-modal-sheet": "^2.2.0",
     "react-redux": "^9.1.0",
     "react-syntax-highlighter": "^15.5.0",
+    "redux": ">4.0.0",
     "redux-persist": "^6.0.0",
     "rehype-katex": "^7.0.0",
     "rehype-raw": "^7.0.0",
     "rehype-sanitize": "^6.0.0",
     "swiper": "^11.1.1",
-    "tailwind-merge": "^2.5.5"
+    "tailwind-merge": "^2.5.5",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.7",
