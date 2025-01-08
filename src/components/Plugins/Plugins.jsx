@@ -10,23 +10,14 @@ import { PLUGINS } from "@/utils/data";
 
 import PluginInactive from "../../../public/svgs/sidebar/Plugin_Inactive.svg";
 
-interface Plugin {
-  tag: string;
-  name: string;
-  comingSoon: boolean;
-  url: string;
-  icon?: React.ReactNode;
-  description: string;
-}
-
-const groupByTag = (plugins: Plugin[]) => {
+const groupByTag = (plugins) => {
   return plugins.reduce((acc, plugin) => {
     if (!acc[plugin.tag]) {
       acc[plugin.tag] = [];
     }
     acc[plugin.tag].push(plugin);
     return acc;
-  }, {} as Record<string, Plugin[]>);
+  }, {});
 };
 
 const Plugins = () => {

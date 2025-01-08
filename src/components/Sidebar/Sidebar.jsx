@@ -11,7 +11,6 @@ import Settings from "../Settings/Settings";
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import { selectAuthState } from "@/store/authSlice";
-import { useDisclosure } from "@nextui-org/modal";
 import { usePathname } from "next/navigation"; // Import usePathname
 
 import Logo from "../../../public/Logo.svg";
@@ -35,8 +34,8 @@ const Sidebar = () => {
 
   const [width, setWidth] = useState(0);
   const [isClosing, setIsClosing] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(width >= 512);
-  const sidebarRef = useRef<HTMLDivElement>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const sidebarRef = useRef(null);
 
   const pathname = usePathname(); // Get the current pathname
 
@@ -50,11 +49,8 @@ const Sidebar = () => {
   }, []);
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        sidebarRef.current &&
-        !sidebarRef.current.contains(event.target as Node)
-      ) {
+    const handleClickOutside = (event) => {
+      if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
         closeSidebar();
       }
     };
@@ -66,7 +62,7 @@ const Sidebar = () => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [sidebarRef, width, setIsSidebarOpen]);
+  }, [sidebarRef, width]);
 
   useEffect(() => {
     if (!authState) {
@@ -249,4 +245,3 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
-

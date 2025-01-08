@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./Chat.module.css";
@@ -17,7 +17,6 @@ import {
   updateStock,
   updateWeather,
 } from "@/store/chatSlice";
-import { Chat as ChatType } from "../../utils/types";
 import { generateCitations } from "../../utils/utils";
 import { handleMode } from "../../utils/api";
 
@@ -26,14 +25,8 @@ import useChatFork from "@/hooks/useChatFork";
 import useChatRetry from "@/hooks/useChatRetry";
 import useChatAnswer from "@/hooks/useChatAnswer";
 
-type Props = {
-  id: string;
-};
-
-const Chat = (props: Props) => {
-  const { id } = props;
+const Chat = ({ id }) => {
   const dispatch = useDispatch();
-
   const { chatThread, isFetching } = useChatFetch(id);
   const { handleFork } = useChatFork(id);
   const { handleRetry } = useChatRetry();
@@ -42,9 +35,9 @@ const Chat = (props: Props) => {
   const [isCompleted, setIsCompleted] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
   const [error, setError] = useState("");
-  const [errorFunction, setErrorFunction] = useState<Function | null>(null);
+  const [errorFunction, setErrorFunction] = useState(null);
 
-  const chatContainerRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef(null);
 
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -62,120 +55,8 @@ const Chat = (props: Props) => {
     setIsCompleted,
   });
 
-  // Production Code
-  // const [lastProcessedIndex, setLastProcessedIndex] = useState<number | null>(
-  //   null
-  // );
-
-  // useEffect(() => {
-  //   const processChatThread = async () => {
-  //     if (!chatThread || chatThread.chats.length === 0) return;
-  //     const lastChatIndex = chatThread.chats.length - 1;
-  //     const lastChat = chatThread.chats[lastChatIndex];
-
-  //     if (lastProcessedIndex === lastChatIndex) return;
-  //     if (!lastChat.mode) {
-  //       try {
-  //         const { mode, arg } = await handleMode(lastChat.question);
-  //         let parsedArg;
-  //         try {
-  //           parsedArg = arg ? JSON.parse(arg) : {};
-  //         } catch (parseError) {
-  //           console.error("Damn determining mode and arguments:", error);
-  //         }
-
-  //         dispatch(
-  //           updateMode({
-  //             threadId: id,
-  //             chatIndex: lastChatIndex,
-  //             mode: mode,
-  //             arg: parsedArg,
-  //           })
-  //         );
-  //       } catch (error) {
-  //         setError("Error determining mode and arguments");
-  //         setErrorFunction(() => handleMode.bind(null, lastChat.question));
-  //       }
-  //       return;
-  //     }
-
-  //     if (lastChat.mode === "weather" && !lastChat.weatherResults) {
-  //       try {
-  //         console.log("lastChat.arg.location", lastChat.arg.location);
-  //         await handleWeather(lastChat.arg.location, lastChatIndex);
-  //       } catch (error) {
-  //         setError("Error fetching or processing search results");
-  //         setErrorFunction(() =>
-  //           handleWeather.bind(null, lastChat.arg.location, lastChatIndex)
-  //         );
-  //         return;
-  //       }
-  //     }
-
-  //     if (lastChat.mode === "stock" && !lastChat.stocksResults) {
-  //       try {
-  //         console.log("lastChat.arg.symbol", lastChat.arg.symbol);
-  //         await handleStock(lastChat.arg.symbol, lastChatIndex);
-  //       } catch (error) {
-  //         setError("Error fetching or processing search results");
-  //         setErrorFunction(() =>
-  //           handleStock.bind(null, lastChat.arg.symbol, lastChatIndex)
-  //         );
-  //         return;
-  //       }
-  //     }
-
-  //     if (lastChat.mode === "dictionary" && !lastChat.dictionaryResults) {
-  //       try {
-  //         console.log("lastChat.arg.word", lastChat.arg.symbol);
-  //         await handleDictionary(lastChat.arg.word, lastChatIndex);
-  //       } catch (error) {
-  //         setError("Error fetching or processing dictionary results");
-  //         setErrorFunction(() =>
-  //           handleDictionary.bind(null, lastChat.arg.word, lastChatIndex)
-  //         );
-  //         return;
-  //       }
-  //     }
-
-  //     if (lastChat.mode === "search" && !lastChat.searchResults) {
-  //       try {
-  //         await handleSearch(lastChatIndex);
-  //       } catch (error) {
-  //         setError("Error fetching or processing search results");
-  //         setErrorFunction(() => handleSearch.bind(null, lastChatIndex));
-  //         return;
-  //       }
-  //     }
-
-  //     if (
-  //       (lastChat.mode === "chat" || lastChat.mode === "image") &&
-  //       !lastChat.answer
-  //     ) {
-  //       try {
-  //         await handleAnswer(lastChat);
-  //       } catch (error) {
-  //         console.error("Error generating answer:", error);
-  //       }
-  //     } else if (lastChat.answer) {
-  //       setIsLoading(false);
-  //       setIsCompleted(true);
-  //     }
-
-  //     setLastProcessedIndex(lastChatIndex);
-  //   };
-
-  //   processChatThread();
-  // }, [
-  //   chatThread?.chats.length,
-  //   chatThread?.chats[chatThread?.chats.length - 1]?.mode,
-  //   chatThread?.chats[chatThread?.chats.length - 1]?.searchResults,
-  //   chatThread?.chats[chatThread?.chats.length - 1]?.answer,
-  // ]);
-
-  // Development Code
-  const lastProcessedChatRef = useRef<number>(0);
-  const chatIdCounterRef = useRef<number>(0);
+  const lastProcessedChatRef = useRef(0);
+  const chatIdCounterRef = useRef(0);
 
   useEffect(() => {
     const processChatThread = async () => {
@@ -192,7 +73,7 @@ const Chat = (props: Props) => {
               try {
                 parsedArg = arg ? JSON.parse(arg) : {};
               } catch (parseError) {
-                console.error("Damn determining mode and arguments:", error);
+                console.error("Error parsing arguments:", parseError);
               }
 
               dispatch(
@@ -213,10 +94,9 @@ const Chat = (props: Props) => {
 
           if (lastChat.mode === "weather" && !lastChat.weatherResults) {
             try {
-              console.log("lastChat.arg.location", lastChat.arg.location);
               await handleWeather(lastChat.arg.location, lastChatIndex);
             } catch (error) {
-              setError("Error fetching or processing search results");
+              setError("Error fetching or processing weather data");
               setErrorFunction(() =>
                 handleWeather.bind(null, lastChat.arg.location, lastChatIndex)
               );
@@ -226,10 +106,9 @@ const Chat = (props: Props) => {
 
           if (lastChat.mode === "stock" && !lastChat.stocksResults) {
             try {
-              console.log("lastChat.arg.symbol", lastChat.arg.symbol);
               await handleStock(lastChat.arg.symbol, lastChatIndex);
             } catch (error) {
-              setError("Error fetching or processing search results");
+              setError("Error fetching or processing stock data");
               setErrorFunction(() =>
                 handleStock.bind(null, lastChat.arg.symbol, lastChatIndex)
               );
@@ -239,10 +118,9 @@ const Chat = (props: Props) => {
 
           if (lastChat.mode === "dictionary" && !lastChat.dictionaryResults) {
             try {
-              console.log("lastChat.arg.word", lastChat.arg.symbol);
               await handleDictionary(lastChat.arg.word, lastChatIndex);
             } catch (error) {
-              setError("Error fetching or processing dictionary results");
+              setError("Error fetching or processing dictionary data");
               setErrorFunction(() =>
                 handleDictionary.bind(null, lastChat.arg.word, lastChatIndex)
               );
@@ -289,7 +167,7 @@ const Chat = (props: Props) => {
     chatThread?.chats[chatThread?.chats.length - 1]?.answer,
   ]);
 
-  const handleSearch = async (chatIndex: number) => {
+  const handleSearch = async (chatIndex) => {
     const chat = chatThread?.chats[chatIndex];
     setIsLoading(true);
     setIsCompleted(false);
@@ -324,7 +202,7 @@ const Chat = (props: Props) => {
           throw new Error("No valid search results found to scrape.");
         }
 
-        const urlsToScrape = data.map((item: any) => item.url).join(",");
+        const urlsToScrape = data.map((item) => item.url).join(",");
         const scrapeResponse = await fetch(`/api/scrape?urls=${urlsToScrape}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -348,7 +226,7 @@ const Chat = (props: Props) => {
     }
   };
 
-  const handleWeather = async (location: string, chatIndex: number) => {
+  const handleWeather = async (location, chatIndex) => {
     const chat = chatThread?.chats[chatIndex];
     setIsLoading(true);
     setIsCompleted(false);
@@ -364,8 +242,6 @@ const Chat = (props: Props) => {
         }
 
         const weatherData = await response.json();
-        console.log("Weather Data:", weatherData);
-
         dispatch(
           updateWeather({
             threadId: id,
@@ -385,7 +261,7 @@ const Chat = (props: Props) => {
     }
   };
 
-  const handleStock = async (stock: string, chatIndex: number) => {
+  const handleStock = async (stock, chatIndex) => {
     const chat = chatThread?.chats[chatIndex];
     setIsLoading(true);
     setIsCompleted(false);
@@ -397,12 +273,10 @@ const Chat = (props: Props) => {
         );
 
         if (!response.ok) {
-          throw new Error("Failed to fetch weather data");
+          throw new Error("Failed to fetch stock data");
         }
 
         const stocksData = await response.json();
-        console.log("stock Data:", stocksData);
-
         dispatch(
           updateStock({
             threadId: id,
@@ -422,7 +296,7 @@ const Chat = (props: Props) => {
     }
   };
 
-  const handleDictionary = async (word: string, chatIndex: number) => {
+  const handleDictionary = async (word, chatIndex) => {
     const chat = chatThread?.chats[chatIndex];
     setIsLoading(true);
     setIsCompleted(false);
@@ -434,12 +308,10 @@ const Chat = (props: Props) => {
         );
 
         if (!response.ok) {
-          throw new Error("Failed to fetch weather data");
+          throw new Error("Failed to fetch dictionary data");
         }
 
         const dictionaryData = await response.json();
-        console.log("dictionary Data:", dictionaryData);
-
         dispatch(
           updateDictionary({
             threadId: id,
@@ -450,7 +322,7 @@ const Chat = (props: Props) => {
         setError("");
         await handleAnswer(chat, JSON.stringify(dictionaryData));
       } else {
-        throw new Error("Mode is not dictoionary");
+        throw new Error("Mode is not dictionary");
       }
     } catch (error) {
       console.error("Error fetching or processing dictionary data:", error);
@@ -459,95 +331,35 @@ const Chat = (props: Props) => {
     }
   };
 
-  const handleSend = (text: string) => {
-    if (text.trim() !== "") {
-      const newChat: ChatType = {
-        mode: "",
-        query: text.trim(),
-        question: text,
-        answer: "",
-      };
-      dispatch(addChat({ threadId: id, chat: newChat }));
-    }
-  };
-
-  if (isFetching) {
+  const chat = chatThread?.chats || [];
+  const renderChat = chat.map((message, index) => {
     return (
-      <div className={styles.container}>
-        <div className={styles.chat}>
-          <p className={styles.question}>Loading...</p>
-          <ChatFetch />
-        </div>
+      <div key={index} className={styles.chatRow}>
+        <Prompt message={message} />
+        <Actions message={message} handleFork={handleFork} />
+        <Source
+          message={message}
+          citations={generateCitations(message.answer)}
+        />
+        <Answer
+          message={message}
+          isLoading={isLoading}
+          isCompleted={isCompleted}
+          isStreaming={isStreaming}
+        />
       </div>
     );
-  }
-
-  if (!chatThread) {
-    return <Chat404 />;
-  }
+  });
 
   return (
-    <div className={styles.container}>
-      {chatThread?.chats.map((chat, index) => (
-        <div
-          ref={index === chatThread.chats.length - 1 ? chatContainerRef : null}
-          key={index}
-          className={styles.chat}
-        >
-          <p className={styles.question}>{chat.question}</p>
-          {!chat.mode ? (
-            <ChatFetch />
-          ) : (
-            <>
-              <Source
-                mode={chat.mode}
-                fileInfo={chat.fileInfo}
-                searchResults={chat.searchResults}
-                stockResults={chat.stocksResults}
-                weatherResults={chat.weatherResults}
-                dictionaryResults={chat.dictionaryResults}
-              />
-              <Answer
-                error={error}
-                answer={chat.answer}
-                isLoading={isLoading && index === chatThread.chats.length - 1}
-                citations={generateCitations(chat)}
-              />
-              {index === chatThread.chats.length - 1 &&
-                !isLoading &&
-                isCompleted && (
-                  <Actions
-                    fork={chatThread.shared}
-                    chat={chat}
-                    chatThread={chatThread}
-                    rewrite={handleRewrite}
-                  />
-                )}
-              {index < chatThread.chats.length - 1 && (
-                <div className={styles.divider} />
-              )}
-            </>
-          )}
-        </div>
-      ))}
-      <Prompt
-        block={
-          chatThread.chats[chatThread.chats.length - 1].mode === "" ||
-          isLoading ||
-          isStreaming
-        }
-        error={error}
-        streaming={isStreaming}
-        fork={chatThread.shared}
-        handleFork={handleFork}
-        handleSend={handleSend}
-        handleCancel={handleCancel}
-        handleRetry={() => {
-          if (errorFunction) {
-            handleRetry(errorFunction);
-          }
-        }}
-      />
+    <div className={styles.chatContainer}>
+      {error ? (
+        <Chat404 error={error} errorFunction={errorFunction} />
+      ) : isFetching ? (
+        <ChatFetch />
+      ) : (
+        renderChat
+      )}
     </div>
   );
 };

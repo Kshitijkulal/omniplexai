@@ -35,7 +35,7 @@ const Settings = () => {
   const dispatch = useDispatch();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const isAuthenticated = useSelector(selectAuthState);
-  const router = useRouter(); // Added for redirect functionality
+  const router = useRouter();
 
   const aiModel = useSelector(selectModel);
   const aiTemperature = useSelector(selectTemperature);
@@ -90,7 +90,7 @@ const Settings = () => {
     aiCustomPrompt,
   ]);
 
-  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleSelectChange = (e) => {
     setModelLocal(e.target.value);
     if (e.target.value !== aiModel) {
       setHasChanges(true);

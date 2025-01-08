@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import { setAuthState, setUserDetailsState } from "@/store/authSlice";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
-const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
+const AuthWrapper = ({ children }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {

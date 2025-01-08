@@ -10,12 +10,7 @@ import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../../../firebaseConfig";
 import Spinner from "../Spinner/Spinner";
 
-type Props = {
-  isOpen: boolean;
-  onClose: () => void;
-};
-
-const Auth = (props: Props) => {
+const Auth = (props) => {
   const router = useRouter();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);

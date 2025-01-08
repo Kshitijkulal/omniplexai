@@ -15,7 +15,7 @@ import Spinner from "../../../components/Spinner/Spinner";
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login state
+  const [loginComplete, setLoginComplete] = useState(false);
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -24,8 +24,7 @@ export default function LoginPage() {
     try {
       const auth = getAuth();
       const provider = new GoogleAuthProvider();
-      
-      // Sign-in with Google popup
+
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
@@ -33,7 +32,6 @@ export default function LoginPage() {
       const userDoc = await getDoc(userRef);
 
       if (userDoc.exists()) {
-        // If the user already exists, merge user details
         await setDoc(
           userRef,
           {
@@ -46,7 +44,6 @@ export default function LoginPage() {
           { merge: true }
         );
       } else {
-        // If new user, create a new document with user details
         await setDoc(userRef, {
           userDetails: {
             email: user.email,
@@ -57,7 +54,6 @@ export default function LoginPage() {
         });
       }
 
-      // Dispatch authentication state and user details to Redux store
       dispatch(setAuthState(true));
       dispatch(
         setUserDetailsState({
@@ -68,12 +64,12 @@ export default function LoginPage() {
         })
       );
 
-      setIsLoggedIn(true); // Update login state to show the thank you message
+      setLoginComplete(true);
       console.log("Login successful, user details:", user);
     } catch (error) {
       console.log("Error signing in:", error);
     } finally {
-      setLoading(false);  // Stop loading spinner after the process is done
+      setLoading(false);
     }
   };
 
@@ -107,7 +103,6 @@ export default function LoginPage() {
         </div>
 
         <div className="bg-[#F5F4EF] rounded-2xl p-6 shadow-sm border border-[#D4D2C9]">
-          {/* Google Sign-in Button */}
           <Button
             variant="outline"
             className="w-full mb-6 h-11 text-[#4E4E4E] font-normal bg-[#FEFEFD] border-[#FEFEFD] hover:border-[#E5E5E5]"
@@ -130,49 +125,47 @@ export default function LoginPage() {
               </>
             )}
           </Button>
+        </div>
 
-          <div className="relative mb-6">
-            <div className="relative flex justify-center text-sm">
-              <span className="bg-[#F5F4EF] px-4 text-[#4E4E4E]">OR</span>
-            </div>
-          </div>
-
-          {/* Email Input Box */}
-          <Input
-            type="email"
-            placeholder="Enter your personal or work email"
-            className="mb-4 h-11 text-[#8D7163] bg-[#F8F8F7] font-normal border-[#737163] focus:ring-2 focus:ring-[#C45D3E]"
-          />
-
-          {/* Continue with Email Button */}
-          <Button className="w-full bg-[#C45D3E] hover:bg-[#B34D2E] h-11">
-            Continue with email
-          </Button>
-
-          <div className="mt-6 text-center text-sm text-[#4E4E4E]">
-            By continuing, you agree to Anthropic's{" "}
-            <Link href="#" className="underline">
-              Consumer Terms
-            </Link>{" "}
-            and{" "}
-            <Link href="#" className="underline">
-              Usage Policy
-            </Link>
-            , and acknowledge their{" "}
-            <Link href="#" className="underline">
-              Privacy Policy
-            </Link>
-            .
+        <div className="relative mb-6">
+          <div className="relative flex justify-center text-sm">
+            <span className="bg-[#F5F4EF] px-4 text-[#4E4E4E]">OR</span>
           </div>
         </div>
 
-        {/* Display Thank You message and Redirect Button after login */}
-        {isLoggedIn && (
-          <div className="mt-8 text-center">
-            <h2 className="text-2xl font-semibold text-[#29261B]">Thank you for logging in!</h2>
-            <p className="text-[#4E4E4E] text-lg mt-4">You can now proceed to the homepage.</p>
+        <Input
+          type="email"
+          placeholder="Enter your personal or work email"
+          className="mb-4 h-11 text-[#8D7163] bg-[#F8F8F7] font-normal border-[#737163] focus:ring-2 focus:ring-[#C45D3E]"
+        />
+
+        <Button className="w-full bg-[#C45D3E] hover:bg-[#B34D2E] h-11">
+          Continue with email
+        </Button>
+
+        <div className="mt-6 text-center text-sm text-[#4E4E4E]">
+          By continuing, you agree to Anthropic&apos;s{" "}
+          <Link href="#" className="underline">
+            Consumer Terms
+          </Link>{" "}
+          and{" "}
+          <Link href="#" className="underline">
+            Usage Policy
+          </Link>
+          , and acknowledge their{" "}
+          <Link href="#" className="underline">
+            Privacy Policy
+          </Link>
+          .
+        </div>
+
+        {(
+          <div className="flex flex-col items-center">
+            <h2 className="text-xl font-medium mb-4 text-[#29261B]">
+              If you logged in successfully,
+            </h2>
             <Link href="/" passHref>
-              <Button className="mt-6 bg-[#C45D3E] hover:bg-[#B34D2E]">
+              <Button className="mt-4 bg-[#C45D3E] hover:bg-[#B34D2E]">
                 Go to Homepage
               </Button>
             </Link>

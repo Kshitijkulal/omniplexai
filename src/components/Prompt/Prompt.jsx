@@ -7,21 +7,10 @@ import Retry from "../../../public/svgs/Retry.svg";
 import Fork from "../../../public/svgs/Fork.svg";
 import Stop from "../../../public/svgs/Stop.svg";
 
-type Props = {
-  fork?: boolean;
-  error: string;
-  block: boolean;
-  streaming: boolean;
-  handleSend: (text: string) => void;
-  handleCancel: () => void;
-  handleRetry: () => void;
-  handleFork: () => void;
-};
-
-const Prompt = (props: Props) => {
+const Prompt = (props) => {
   const [text, setText] = useState("");
 
-  const handleEnter = (event: React.KeyboardEvent) => {
+  const handleEnter = (event) => {
     if (event.key === "Enter" && !event.shiftKey && text.trim() !== "") {
       event.preventDefault();
       props.handleSend(text);

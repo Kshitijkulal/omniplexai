@@ -4,7 +4,6 @@ import Image from "next/image";
 import ShareModal from "../Share/Share";
 import toast from "react-hot-toast";
 import { useDisclosure } from "@nextui-org/react";
-import { Chat, ChatThread } from "@/utils/types";
 import { useSelector } from "react-redux";
 import { selectAuthState } from "@/store/authSlice";
 
@@ -12,14 +11,7 @@ import Copy from "../../../public/svgs/Copy.svg";
 import Share from "../../../public/svgs/Share.svg";
 import Rewrite from "../../../public/svgs/Rewrite.svg";
 
-type Props = {
-  fork?: boolean;
-  chat: Chat;
-  rewrite: () => void;
-  chatThread: ChatThread;
-};
-
-const Actions = (props: Props) => {
+const Actions = (props) => {
   const authState = useSelector(selectAuthState);
   const { isOpen, onOpen, onClose } = useDisclosure();
 

@@ -1,11 +1,7 @@
 import Chat from "@/components/Chat/Chat";
 import AuthWrapper from "../../AuthWrapper";
 
-type Props = {
-  params: { id: string };
-};
-
-export async function generateMetadata({ params }: Props) {
+export async function generateMetadata({ params }) {
   const ogImageUrl = `https://omniplex.ai/api/og?id=${params.id}`;
 
   return {
@@ -41,7 +37,7 @@ export async function generateMetadata({ params }: Props) {
   };
 }
 
-const ChatPage = ({ params }: Props) => {
+const ChatPage = ({ params }) => {
   return (
     <AuthWrapper>
       <Chat id={params.id} />

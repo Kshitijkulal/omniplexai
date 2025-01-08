@@ -24,12 +24,6 @@ import Pen from "../../../public/svgs/Pen.svg";
 import Bin from "../../../public/svgs/Bin.svg";
 import ChatInactive from "../../../public/svgs/sidebar/Chat_Inactive.svg";
 
-interface ChatThread {
-  id: string;
-  chats: { question: string }[];
-  createdAt: Timestamp;
-}
-
 const History = () => {
   const router = useRouter(); // For navigation
   const pathname = usePathname(); // For determining the current route
@@ -37,7 +31,7 @@ const History = () => {
   const userDetails = useSelector(selectUserDetailsState);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
-  const [chatHistory, setChatHistory] = useState<ChatThread[]>([]);
+  const [chatHistory, setChatHistory] = useState([]);
   const [isLoginRoute, setIsLoginRoute] = useState(false); // State to track if we're on the login route
 
   // Monitor route changes dynamically
@@ -62,12 +56,12 @@ const History = () => {
     const history = querySnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
-    })) as ChatThread[];
+    }));
     setChatHistory(history);
     setLoading(false);
   };
 
-  const handleDelete = async (threadId: string) => {
+  const handleDelete = async (threadId) => {
     setDeleting(true);
     await deleteDoc(doc(db, "users", userDetails.uid, "history", threadId));
     fetchChatHistory();

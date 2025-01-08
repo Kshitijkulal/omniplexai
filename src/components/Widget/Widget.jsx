@@ -1,13 +1,8 @@
 import React from "react";
-import styles from "./Weather.module.css";
-import { WeatherType } from "@/utils/types";
+import styles from "./Widget.module.css";
 import { Skeleton } from "@nextui-org/skeleton";
 
-type WeatherProps = {
-  weatherResults?: WeatherType;
-};
-
-const Weather = ({ weatherResults }: WeatherProps) => {
+const Weather = ({ weatherResults }) => {
   return (
     <>
       {weatherResults ? (

@@ -1,19 +1,14 @@
 import React, { useRef } from "react";
 import styles from "./Dictionary.module.css";
-import { DictionaryType } from "@/utils/types";
 import { Player } from "@lottiefiles/react-lottie-player";
 import { Skeleton } from "@nextui-org/skeleton";
 
 import AudioLottie from "../../../public/lottie/Audio.json";
 
-type DictionaryProps = {
-  dictionaryResults?: DictionaryType;
-};
+const Dictionary = ({ dictionaryResults }) => {
+  const animationRefs = useRef([]);
 
-const Dictionary = ({ dictionaryResults }: DictionaryProps) => {
-  const animationRefs = useRef<any[]>([]);
-
-  const handlePlaySound = (audioUrl: string, index: number) => {
+  const handlePlaySound = (audioUrl, index) => {
     if (audioUrl) {
       const audio = new Audio(audioUrl);
       audio.play();

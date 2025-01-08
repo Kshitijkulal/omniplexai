@@ -21,6 +21,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/components/Source/Source.jsx", "src/app/plugins/stocks/page.jsx", "src/app/auth/login/page.jsx", "src/app/chat/[id]/page.jsx", "src/app/AuthWrapper.jsx", "src/app/layout.jsx", "src/app/noj-found.jsx", "src/app/page.jsx", "src/app/providers.jsx", "src/components/Actions/Actions.jsx", "src/components/Answer/Answer.jsx", "src/components/Auth/Auth.jsx", "src/components/Chat/Chat.jsx", "src/components/Chat404/Chat404.jsx", "src/components/ChatFetch/ChatFetch.jsx", "src/components/Delete/Delete.jsx", "src/components/Dictionary/Dictionary.jsx", "src/components/File/File.jsx", "src/components/History/History.jsx", "src/components/Library/Library.jsx", "src/components/MainPrompt/MainPrompt.jsx", "src/components/Plugins/Plugins.jsx", "src/components/Profile/Profile.jsx", "src/components/Prompt/Prompt.jsx", "src/components/Search/Search.jsx", "src/components/Settings/Settings.jsx", "src/components/Share/Share.jsx", "src/components/Sidebar/Sidebar.jsx", "src/components/Spinner/Spinner.jsx", "src/components/SpinnerWhite/SpinnerWhite.jsx", "src/components/ui/button.jsx", "src/components/Weather/Weather.jsx", "src/components/Widget/Widget.jsx"],
   "exclude": ["node_modules"]
 }

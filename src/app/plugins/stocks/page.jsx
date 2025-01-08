@@ -8,13 +8,13 @@ import styles from './page.module.css';
 const API_KEY = process.env.NEXT_PUBLIC_ALPHA_VANTAGE_API_KEY;
 const BASE_URL = 'https://www.alphavantage.co/query?';
 
-async function searchSymbol(keywords: string) {
+async function searchSymbol(keywords) {
   const response = await fetch(`${BASE_URL}function=SYMBOL_SEARCH&keywords=${keywords}&apikey=${API_KEY}`);
   const data = await response.json();
   return data.bestMatches || [];
 }
 
-async function fetchStockData(symbol: string) {
+async function fetchStockData(symbol) {
   const [quoteResponse, overviewResponse, timeSeriesResponse] = await Promise.all([
     fetch(`${BASE_URL}function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${API_KEY}`),
     fetch(`${BASE_URL}function=OVERVIEW&symbol=${symbol}&apikey=${API_KEY}`),
@@ -32,17 +32,17 @@ async function fetchStockData(symbol: string) {
   };
 }
 
-const dataFormatter = (number: number) =>
+const dataFormatter = (number) =>
   `${Intl.NumberFormat("us").format(number).toString()}`;
 
-const formatChartData = (data: any) => {
-  return Object.entries(data).map(([date, values]: [string, any]) => ({
+const formatChartData = (data) => {
+  return Object.entries(data).map(([date, values]) => ({
     date,
     price: parseFloat(values['4. close'])
   })).reverse().slice(0, 30);
 };
 
-const formatMarketCap = (value: string) => {
+const formatMarketCap = (value) => {
   const numValue = parseFloat(value);
   if (numValue >= 1_000_000_000_000) {
     return `${(numValue / 1_000_000_000_000).toFixed(2)} T`;
@@ -53,7 +53,7 @@ const formatMarketCap = (value: string) => {
   }
 };
 
-const CustomTooltip = ({ payload, active }: any) => {
+const CustomTooltip = ({ payload, active }) => {
   if (!active || !payload || payload.length === 0) {
     return null;
   }
@@ -66,7 +66,7 @@ const CustomTooltip = ({ payload, active }: any) => {
   );
 };
 
-const CustomTable: React.FC<{ data: any[] }> = ({ data }) => {
+const CustomTable = ({ data }) => {
   if (!data || data.length === 0) return null;
 
   const headers = Object.keys(data[0]);
@@ -95,9 +95,9 @@ const CustomTable: React.FC<{ data: any[] }> = ({ data }) => {
   );
 };
 
-const Search: React.FC<{ onSelectStock: (symbol: string) => void }> = ({ onSelectStock }) => {
+const Search = ({ onSelectStock }) => {
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState<any[]>([]);
+  const [results, setResults] = useState([]);
 
   const handleSearch = async () => {
     const searchResults = await searchSymbol(query);
@@ -131,8 +131,8 @@ const Search: React.FC<{ onSelectStock: (symbol: string) => void }> = ({ onSelec
   );
 };
 
-const Stock: React.FC<{ stockData?: any }> = ({ stockData }) => {
-  if (!stockData) {
+const Stock = ({ stockResults }) => {
+  if (!stockResults) {
     return (
       <div className={styles.stockContainer}>
         <div className={styles.stockHeader}>
@@ -182,7 +182,7 @@ const Stock: React.FC<{ stockData?: any }> = ({ stockData }) => {
     );
   }
 
-  const { quote, overview, timeSeries } = stockData;
+  const { quote, overview, timeSeries } = stockResults;
 
   const tableData = [
     { Label: 'Open', Value: `$${quote['02. open']}` },
@@ -238,11 +238,11 @@ const Stock: React.FC<{ stockData?: any }> = ({ stockData }) => {
 };
 
 export default function HomePage() {
-  const [stockData, setStockData] = useState<any>(null);
+  const [stockData, setStockData] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(null);
 
-  const handleSelectStock = async (symbol: string) => {
+  const handleSelectStock = async (symbol) => {
     setLoading(true);
     setError(null);
     try {
@@ -260,9 +260,9 @@ export default function HomePage() {
     <div className={styles.container}>
       <h1 className={styles.title}>Stock Viewer</h1>
       <Search onSelectStock={handleSelectStock} />
-      {loading && <p>Loading...</p>}
-      {error && <p className={styles.error}>{error}</p>}
-      <Stock stockData={stockData} />
+      {loading && <div className={styles.loading}>Loading...</div>}
+      {error && <div className={styles.error}>{error}</div>}
+      {stockData && <Stock stockResults={stockData} />}
     </div>
   );
 }

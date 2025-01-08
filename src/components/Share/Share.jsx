@@ -1,22 +1,12 @@
 import React from "react";
+import PropTypes from "prop-types";
 import styles from "./Share.module.css";
 import Image from "next/image";
 import toast from "react-hot-toast";
 import { Modal, ModalContent } from "@nextui-org/modal";
-import { ChatThread } from "@/utils/types";
-import {
-  cutString,
-  formatDateLong,
-  getReadingTimeInMinutes,
-} from "@/utils/utils";
+import { cutString, formatDateLong, getReadingTimeInMinutes } from "@/utils/utils";
 
-type Props = {
-  isOpen: boolean;
-  onClose: () => void;
-  chatThread: ChatThread;
-};
-
-const Share = (props: Props) => {
+const Share = (props) => {
   const firstChat = props.chatThread.chats[0];
   const formattedDate = formatDateLong();
   const readingTime = getReadingTimeInMinutes(props.chatThread.chats);
@@ -108,6 +98,18 @@ const Share = (props: Props) => {
       </ModalContent>
     </Modal>
   );
+};
+
+Share.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  chatThread: PropTypes.shape({
+    chats: PropTypes.arrayOf(
+      PropTypes.shape({
+        question: PropTypes.string.isRequired,
+      })
+    ).isRequired,
+  }).isRequired,
 };
 
 export default Share;

@@ -11,15 +11,8 @@ import { Citation } from "@/utils/types";
 
 import Logo from "../../../public/Logo.svg";
 
-type Props = {
-  error: string;
-  answer: string;
-  isLoading: boolean;
-  citations: Citation[];
-};
-
-const Answer = (props: Props) => {
-  const transform = (text: string) => {
+const Answer = (props) => {
+  const transform = (text) => {
     let transformedText = text.replace(/\\\[/g, "$$").replace(/\\\]/g, "$$");
 
     transformedText = transformedText
@@ -95,3 +88,4 @@ const Answer = (props: Props) => {
 };
 
 export default Answer;
+

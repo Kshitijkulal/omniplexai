@@ -5,7 +5,6 @@ import SpinnerWhite from "../SpinnerWhite/SpinnerWhite";
 import { Skeleton } from "@nextui-org/skeleton";
 import { ScrollShadow } from "@nextui-org/scroll-shadow";
 import { getRelativeDateLabel, cutString } from "@/utils/utils";
-import { LibraryItem } from "@/utils/types";
 import { useSelector } from "react-redux";
 import { selectAuthState, selectUserDetailsState } from "../../store/authSlice";
 import {
@@ -20,15 +19,15 @@ import { db } from "../../../firebaseConfig";
 
 import Bin from "../../../public/svgs/Bin.svg";
 import FolderInactive from "../../../public/svgs/sidebar/Folder_Inactive.svg";
-import { useRouter } from "next/navigation";  // Importing the router
+import { useRouter } from "next/navigation"; // Importing the router
 
 const Library = () => {
-  const router = useRouter();  // Initialize the router
+  const router = useRouter(); // Initialize the router
   const isAuthenticated = useSelector(selectAuthState);
   const userDetails = useSelector(selectUserDetailsState);
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
-  const [libraryData, setLibraryData] = useState<LibraryItem[]>([]);
+  const [libraryData, setLibraryData] = useState([]);
 
   useEffect(() => {
     fetchLibraryData();
@@ -43,7 +42,7 @@ const Library = () => {
       const library = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
-      })) as LibraryItem[];
+      }));
       setLibraryData(library);
       setLoading(false);
     } else {
@@ -52,7 +51,7 @@ const Library = () => {
     }
   };
 
-  const handleDelete = async (itemId: string) => {
+  const handleDelete = async (itemId) => {
     if (isAuthenticated && userDetails.uid) {
       setDeleting(true);
       await deleteDoc(doc(db, "users", userDetails.uid, "library", itemId));
@@ -64,7 +63,7 @@ const Library = () => {
   // Handle authentication button click to redirect to the login page
   const handleAuth = () => {
     if (!isAuthenticated) {
-      router.push("/auth/login");  // Redirect to login page
+      router.push("/auth/login"); // Redirect to login page
     }
   };
 
@@ -142,4 +141,3 @@ const Library = () => {
 };
 
 export default Library;
-

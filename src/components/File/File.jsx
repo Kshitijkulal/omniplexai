@@ -3,13 +3,8 @@ import Image from "next/image";
 import { cutString, formatFileSize } from "../../utils/utils";
 import styles from "./File.module.css";
 import Doc from "../../../public/svgs/Doc.svg";
-import { FileInfo } from "@/utils/types";
 
-type FileBoxProps = {
-  fileInfo?: FileInfo;
-};
-
-const File = ({ fileInfo }: FileBoxProps) => (
+const File = ({ fileInfo }) => (
   <div className={styles.fileBox}>
     <Image alt="Document" src={Doc} className={styles.fileImage} />
     <div className={styles.fileBoxTextContainer}>

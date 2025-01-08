@@ -13,11 +13,7 @@ import { resetAuth, selectUserDetailsState } from "@/store/authSlice";
 
 import User from "../../../public/svgs/sidebar/User.svg";
 
-type Props = {
-  close: () => void;
-};
-
-const Plugins = (props: Props) => {
+const Plugins = (props) => {
   const router = useRouter();
   const dispatch = useDispatch();
   const userDetails = useSelector(selectUserDetailsState);
@@ -37,10 +33,12 @@ const Plugins = (props: Props) => {
       console.log("Error logging out:", error);
     }
   };
-  const handleDelete = (event: React.MouseEvent) => {
+
+  const handleDelete = (event) => {
     event.stopPropagation();
     onOpen();
   };
+
   return (
     <div className={styles.list}>
       <div className={styles.titleContainer}>

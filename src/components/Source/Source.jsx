@@ -3,31 +3,21 @@ import Image from "next/image";
 import styles from "./Source.module.css";
 import File from "../File/File";
 import Search from "../Search/Search";
-import Stock from "../../app/plugins/stocks/page";
+import Stock, { StockType } from "../../app/plugins/stocks/page";
 import Widget from "../Widget/Widget";
 import Weather from "../Weather/Weather";
 import Dictionary from "../Dictionary/Dictionary";
 import {
   FileInfo,
   SearchType,
-  StockType,
   WeatherType,
   DictionaryType,
 } from "@/utils/types";
 
 import SourceLogo from "../../../public/svgs/Source.svg";
 
-type Props = {
-  mode: string;
-  fileInfo?: FileInfo;
-  searchResults?: SearchType;
-  stockResults?: StockType;
-  weatherResults?: WeatherType;
-  dictionaryResults?: DictionaryType;
-};
-
-const Source = (props: Props) => {
-  if (props.mode !== "chat") {
+const Source = ({ mode, fileInfo, searchResults, stockResults, weatherResults, dictionaryResults }) => {
+  if (mode !== "chat") {
     return (
       <div className={styles.sourceContainer}>
         <div className={styles.sourceTextRow}>
@@ -35,34 +25,34 @@ const Source = (props: Props) => {
           <p className={styles.sourceText}>Source</p>
         </div>
 
-        {props.mode === "image" && (
+        {mode === "image" && fileInfo && (
           <div className={styles.sourceRow}>
-            <File fileInfo={props.fileInfo} />
+            <File fileInfo={fileInfo} />
           </div>
         )}
 
-        {props.mode === "search" && (
+        {mode === "search" && searchResults && (
           <>
-            <Search searchResults={props.searchResults} />
-            <Widget searchResults={props.searchResults} />
+            <Search searchResults={searchResults} />
+            <Widget searchResults={searchResults} />
           </>
         )}
 
-        {props.mode === "stock" && (
+        {mode === "stock" && stockResults && (
           <div className={styles.sourceRow}>
-            <Stock stockResults={props.stockResults} />
+            <Stock stockResults={stockResults} />
           </div>
         )}
 
-        {props.mode === "weather" && (
+        {mode === "weather" && weatherResults && (
           <div className={styles.sourceRow}>
-            <Weather weatherResults={props.weatherResults} />
+            <Weather weatherResults={weatherResults} />
           </div>
         )}
 
-        {props.mode === "dictionary" && (
+        {mode === "dictionary" && dictionaryResults && (
           <div className={styles.sourceRow}>
-            <Dictionary dictionaryResults={props.dictionaryResults} />
+            <Dictionary dictionaryResults={dictionaryResults} />
           </div>
         )}
       </div>

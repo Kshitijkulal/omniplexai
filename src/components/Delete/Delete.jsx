@@ -24,20 +24,14 @@ import {
 import { db } from "../../../firebaseConfig";
 import toast from "react-hot-toast";
 
-type Props = {
-  isOpen: boolean;
-  onClose: () => void;
-  delete: () => void;
-};
-
-const Delete = (props: Props) => {
+const Delete = (props) => {
   const router = useRouter();
   const dispatch = useDispatch();
   const userDetails = useSelector(selectUserDetailsState);
   const userID = userDetails?.uid;
   const [loading, setLoading] = useState(false);
 
-  const deleteUserData = async (userId: string) => {
+  const deleteUserData = async (userId) => {
     try {
       const auth = getAuth();
       const user = auth.currentUser;
@@ -73,7 +67,7 @@ const Delete = (props: Props) => {
     }
   };
 
-  const handleDelete = async (event: React.MouseEvent) => {
+  const handleDelete = async (event) => {
     event.stopPropagation();
     setLoading(true);
 
@@ -84,7 +78,7 @@ const Delete = (props: Props) => {
       if (user) {
         const provider = new GoogleAuthProvider();
         await reauthenticateWithPopup(user, provider);
-        await deleteUserData(userID!);
+        await deleteUserData(userID);
         props.delete();
         props.onClose();
         dispatch(resetAISettings());
@@ -187,3 +181,4 @@ const Delete = (props: Props) => {
 };
 
 export default Delete;
+

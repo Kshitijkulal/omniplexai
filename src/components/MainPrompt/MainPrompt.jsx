@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Image, { StaticImageData } from "next/image";
+import Image from "next/image";
 import styles from "./MainPrompt.module.css";
 import Auth from "../Auth/Auth";
 import SpinnerWhite from "../SpinnerWhite/SpinnerWhite";
@@ -9,7 +9,6 @@ import toast from "react-hot-toast";
 import Sheet from "react-modal-sheet";
 import { cutString } from "../../utils/utils";
 import { focusOptions } from "../../utils/data";
-import { FileInfo, Mode, Chat } from "@/utils/types";
 import { nanoid } from "nanoid";
 import { useRouter } from "next/navigation";
 import { useDisclosure } from "@nextui-org/modal";
@@ -42,9 +41,9 @@ const MainPrompt = () => {
   const [width, setWidth] = useState(0);
   const [modal, setModal] = useState("");
   const [loading, setLoading] = useState(false);
-  const [mode, setMode] = useState<Mode>("");
+  const [mode, setMode] = useState("");
   const [buttonText, setButtonText] = useState("Attach");
-  const [fileInfo, setFileInfo] = useState<FileInfo | null>(null);
+  const [fileInfo, setFileInfo] = useState(null);
   const [open, setOpen] = useState(false);
   const [focus, setFocus] = useState({
     website: "Focus",
@@ -61,11 +60,7 @@ const MainPrompt = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const handleFocusChange = (
-    website: string,
-    query: string,
-    icon: StaticImageData
-  ) => {
+  const handleFocusChange = (website, query, icon) => {
     if (website === "Focus") {
       setMode("");
     } else if (website === "Writing") {
@@ -81,7 +76,7 @@ const MainPrompt = () => {
     if (text.trim() !== "") {
       const id = nanoid(10);
       const currentMode = fileInfo ? "image" : mode;
-      const chatObject: Chat = {
+      const chatObject = {
         mode: currentMode,
         question: text.trim(),
         answer: "",
@@ -122,7 +117,7 @@ const MainPrompt = () => {
     } else return;
   };
 
-  const handleEnter = (event: React.KeyboardEvent) => {
+  const handleEnter = (event) => {
     if (event.key === "Enter" && !event.shiftKey && text.trim() !== "") {
       event.preventDefault();
       handleSend();
@@ -130,7 +125,7 @@ const MainPrompt = () => {
     }
   };
 
-  const handleInput = (e: any) => {
+  const handleInput = (e) => {
     const target = e.target;
     setText(target.value);
     target.style.height = "auto";
@@ -186,7 +181,7 @@ const MainPrompt = () => {
             const snapshot = await uploadBytes(storageRef, file);
             const url = await getDownloadURL(snapshot.ref);
 
-            const newFileInfo: FileInfo = {
+            const newFileInfo = {
               url: url,
               name: file.name,
               size: file.size,
@@ -230,7 +225,6 @@ const MainPrompt = () => {
       router.push("/auth/login");  // Redirect if not authenticated
     }
   };
-  
 
   return (
     <div className={styles.container}>
@@ -304,107 +298,27 @@ const MainPrompt = () => {
                   </div>
                 </PopoverContent>
               </Popover>
-            ) : (
-              <Sheet
-                isOpen={open}
-                onClose={() => setOpen(false)}
-                detent="content-height"
-              >
-                <Sheet.Container style={{ background: "#232323" }}>
-                  <Sheet.Header />
-                  <Sheet.Content>
-                    <div className={styles.modal}>
-                      {focusOptions.map((option, index) => (
-                        <React.Fragment key={index}>
-                          <div
-                            className={styles.modalBlock}
-                            onClick={() =>
-                              option.website === "All"
-                                ? handleFocusChange("Focus", "", Filter)
-                                : handleFocusChange(
-                                    option.website,
-                                    option.query,
-                                    option.icon
-                                  )
-                            }
-                          >
-                            <div className={styles.modalRow}>
-                              <div className={styles.modalTitleContainer}>
-                                <Image
-                                  src={option.icon}
-                                  alt={option.website}
-                                  width={24}
-                                  height={24}
-                                />
-                                <p className={styles.modalText}>
-                                  {option.website}
-                                </p>
-                              </div>
-                              {focus.website === option.website && (
-                                <Image
-                                  src={Check}
-                                  alt="Check"
-                                  width={30}
-                                  height={30}
-                                />
-                              )}
-                            </div>
-                            <p className={styles.modalSmallText}>
-                              {option.description}
-                            </p>
-                          </div>
-                          {index !== 5 && <div className={styles.divider} />}
-                        </React.Fragment>
-                      ))}
-                    </div>
-                  </Sheet.Content>
-                </Sheet.Container>
-                <Sheet.Backdrop onTap={() => setOpen(false)} />
-              </Sheet>
-            )}
-            <div className={styles.button} onClick={handleModal}>
-              {loading ? (
-                <div className={styles.spinner} style={{ marginTop: -3 }}>
-                  <SpinnerWhite />
-                </div>
-              ) : fileInfo?.url ? (
-                <Image
-                  src={FileActive}
-                  alt="FileActive"
-                  width={18}
-                  height={18}
-                />
-              ) : (
-                <Image src={Clip} alt="Clip" width={18} height={18} />
-              )}
-              <p
-                className={styles.buttonText}
-                style={{ color: fileInfo?.url ? "#35A7FF" : "#ffffff" }}
-              >
-                {cutString(buttonText, 15)}
-              </p>
-              {fileInfo?.url && (
-                <Image
-                  src={CrossRed}
-                  alt="CrossRed"
-                  className={styles.cross}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    setButtonText("Attach");
-                    setFileInfo(null);
-                  }}
-                />
-              )}
-            </div>
+            ) : null}
           </div>
-          <div className={styles.sendButton}>
-            <Image
-              src={Arrow}
-              alt="Arrow"
-              width={24}
-              height={24}
-              onClick={handleSend}
-            />
+
+          <div className={styles.sectionRow}>
+            <div
+              className={styles.button}
+              onClick={handleModal}
+              disabled={loading}
+            >
+              {loading ? (
+                <SpinnerWhite />
+              ) : (
+                <Image
+                  src={fileInfo ? Check : Clip}
+                  alt="Clip"
+                  width={24}
+                  height={24}
+                />
+              )}
+              <p className={styles.buttonText}>{buttonText}</p>
+            </div>
           </div>
         </div>
       </div>

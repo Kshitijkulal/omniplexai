@@ -1,5 +1,3 @@
-import type { Metadata } from "next";
-import type { Viewport } from "next";
 import { Inter } from "next/font/google";
 import { Providers } from "./providers";
 import "katex/dist/katex.min.css";
@@ -8,7 +6,7 @@ import Sidebar from "@/components/Sidebar/Sidebar";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
+export const metadata = {
   title: "Omniplex",
   description: "Search online with the power of AI. Try now!",
   icons: {
@@ -49,16 +47,12 @@ export const metadata: Metadata = {
   },
 };
 
-export const viewport: Viewport = {
+export const viewport = {
   width: "device-width",
   initialScale: 1,
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }) {
   return (
     <html lang="en" className="dark">
       <body className={inter.className}>

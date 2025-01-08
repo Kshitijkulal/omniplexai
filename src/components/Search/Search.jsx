@@ -1,21 +1,16 @@
 import React from "react";
 import Image from "next/image";
 import styles from "./Search.module.css";
-import { SearchType } from "@/utils/types";
 import { cutString, getSecondLevelDomain } from "../../utils/utils";
 import { Skeleton } from "@nextui-org/skeleton";
 
-type SearchProps = {
-  searchResults?: SearchType;
-};
-
-const Search = ({ searchResults }: SearchProps) => {
+const Search = ({ searchResults }) => {
   const webPages = searchResults?.data?.webPages?.value || [];
 
   return (
     <div className={styles.sourceRow}>
       {webPages.length > 0 ? (
-        webPages.slice(0, 3).map((item: any, index: number) => (
+        webPages.slice(0, 3).map((item, index) => (
           <div
             className={styles.sourceBox}
             key={index}
